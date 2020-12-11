@@ -32,8 +32,7 @@
                         <p *ngSwitchDefault>{{ repository.description }}</p>
                     </div>
 
-                    <!-- TODO: The '.' is a placeholder -->
-                    <a routerLink="." class="card-link">Project Builds</a>
+                    <a [routerLink]="['/projects/project', repository.name]" class="card-link">Project Builds</a>
                     <a href="{{ repository.homepage }}" *ngIf="repository.homepage != null && repository.homepage != ''" class="card-link">
                         Project Site
                     </a>

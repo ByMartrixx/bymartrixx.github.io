@@ -1,1 +1,15 @@
-<p>project works!</p>
+<div class="container">
+    <nav aria-label="breadcrumb" class="mt-5">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" [ngClass]="{'active': this.selectedRun == null}" aria-label="page">
+                {{ this.projectName }}
+            </li>
+
+            <!-- If it exists, it should be active -->
+            <li class="breadcrumb-item active" *ngIf="this.selectedRun != null" aria-label="page">
+                #{{ this.selectedRun.run_number }}
+            </li>
+        </ol>
+    </nav>
+    <p>project works!</p>
+</div>
