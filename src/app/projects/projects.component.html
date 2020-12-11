@@ -46,6 +46,9 @@
                         <fa-icon [icon]="faCircle"></fa-icon>
                             {{ repository.language }}
                     </i>
+                    <span *ngIf="repository.forks > 0">
+                        <fa-icon [icon]="faCodeBranch"></fa-icon> {{ repository.forks }}
+                    </span>
                 </small></div>
             </div>
         </div>
