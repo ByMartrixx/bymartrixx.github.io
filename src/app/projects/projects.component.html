@@ -1,1 +1,38 @@
-<p>projects works!</p>
+<div class="container">
+    <h2 class="text-center">Open source projects</h2>
+    <hr>
+
+    <div *ngIf="this.repositories == null" class="d-flex justify-content-center">
+        <div class="spinner-border m-5 text-muted" role="status">
+            <span class="d-none">Loading...</span>
+        </div>
+    </div>
+
+
+    <!-- Repositories -->
+    <div *ngIf="this.repositories != null" class="repositories text-left">
+        <div *ngFor="let repository of this.repositories" class="repository">
+            <h4>
+                <a href="{{ repository.html_url }}" target="_blank" rel="noopener noreferrer" class="link">{{ repository.name }} </a>
+                <fa-icon *ngIf="repository.fork" [icon]="faCodeBranch" ></fa-icon>
+                <fa-icon *ngIf="repository.archived" [icon]="faArchive"></fa-icon>
+            </h4>
+
+            <small *ngIf="repository.license != null" class="text-muted">
+                <fa-icon [icon]="faBalanceScale"></fa-icon><i> {{ repository.license.name }}</i>
+            </small>
+
+            <div [ngSwitch]="repository.description">
+                <p *ngSwitchCase="null"><i>No description provided.</i></p>
+                <p *ngSwitchDefault>{{ repository.description }}</p>
+            </div>
+
+            <small><fa-icon [icon]="faStar"></fa-icon> {{ repository.stargazers_count }}
+                <i *ngIf="repository.language != null" [ngStyle]="{ 'color': getColorForLang(repository.language) }">
+                     <fa-icon [icon]="faCircle"></fa-icon> {{ repository.language }}</i>
+            </small>
+
+            <hr>
+        </div>
+    </div>
+</div>
