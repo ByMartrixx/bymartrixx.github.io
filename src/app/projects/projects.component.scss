@@ -1,16 +1,13 @@
-.container hr {
-    margin-bottom: 50px;
-}
+.repository {
+    max-height: 340px;
+    height: 100%;
 
-.repository .link {
-    color: #008a64;
-    text-decoration: none;
-}
+    .link {
+        color: #008a64;
+        text-decoration: none;
+    }
 
-.repository .link:hover {
-    color: #629c99;
-}
-
-.repository hr {
-    margin-bottom: 30px;
+    .link:hover {
+        color: #629c99;
+    }
 }

@@ -1,6 +1,6 @@
 <div class="container">
-    <h2 class="text-center">Open source projects</h2>
-    <hr>
+    <h2 class="text-center mt-4">Open source projects</h2>
+    <hr class="mb-5">
 
     <div *ngIf="this.repositories == null" class="d-flex justify-content-center">
         <div class="spinner-border m-5 text-muted" role="status">
@@ -9,30 +9,45 @@
     </div>
 
 
-    <!-- Repositories -->
-    <div *ngIf="this.repositories != null" class="repositories text-left">
-        <div *ngFor="let repository of this.repositories" class="repository">
-            <h4>
-                <a href="{{ repository.html_url }}" target="_blank" rel="noopener noreferrer" class="link">{{ repository.name }} </a>
-                <fa-icon *ngIf="repository.fork" [icon]="faCodeBranch" ></fa-icon>
-                <fa-icon *ngIf="repository.archived" [icon]="faArchive"></fa-icon>
-            </h4>
+    <!-- Repositories cards -->
+    <div class="row row-cols-1 row-cols-md-2 repositories" *ngIf="this.repositories != null">
+        <div class="col mb-4" *ngFor="let repository of this.repositories">
+            <div class="card repository">
+                <div class="card-body">
+                    <!-- Repository name -->
+                    <h4 class="card-title">
+                        <a href="{{ repository.html_url }}" class="link">{{ repository.name }} </a>
+                        <fa-icon *ngIf="repository.fork" [icon]="faCodeBranch"></fa-icon>
+                        <fa-icon *ngIf="repository.archive" [icon]="faArchive"></fa-icon>
+                    </h4>
 
-            <small *ngIf="repository.license != null" class="text-muted">
-                <fa-icon [icon]="faBalanceScale"></fa-icon><i> {{ repository.license.name }}</i>
-            </small>
+                    <!-- Repository License -->
+                    <small class="card-subtitle text-muted" *ngIf="repository.license != null">
+                        <fa-icon [icon]="faBalanceScale"></fa-icon><i> {{ repository.license.name }}</i>
+                    </small>
 
-            <div [ngSwitch]="repository.description">
-                <p *ngSwitchCase="null"><i>No description provided.</i></p>
-                <p *ngSwitchDefault>{{ repository.description }}</p>
+                    <!-- Repository description -->
+                    <div class="card-text" [ngSwitch]="repository.description">
+                        <p *ngSwitchCase="null"><i>No description provided.</i></p>
+                        <p *ngSwitchDefault>{{ repository.description }}</p>
+                    </div>
+
+                    <!-- TODO: The '.' is a placeholder -->
+                    <a routerLink="." class="card-link">Project Builds</a>
+                    <a href="{{ repository.homepage }}" *ngIf="repository.homepage != null && repository.homepage != ''" class="card-link">
+                        Project Site
+                    </a>
+                </div>
+
+                <!-- Repository info -->
+                <div class="card-footer text-muted"><small>
+                    <fa-icon [icon]="faStar"></fa-icon> {{ repository.stargazers_count }}
+                    <i *ngIf="repository.language != null" [ngStyle]="{ 'color': getColorForLang(repository.language) }">
+                        <fa-icon [icon]="faCircle"></fa-icon>
+                            {{ repository.language }}
+                    </i>
+                </small></div>
             </div>
-
-            <small><fa-icon [icon]="faStar"></fa-icon> {{ repository.stargazers_count }}
-                <i *ngIf="repository.language != null" [ngStyle]="{ 'color': getColorForLang(repository.language) }">
-                     <fa-icon [icon]="faCircle"></fa-icon> {{ repository.language }}</i>
-            </small>
-
-            <hr>
         </div>
     </div>
 </div>
