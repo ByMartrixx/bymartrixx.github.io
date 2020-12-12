@@ -19,6 +19,7 @@ export class ProjectComponent implements OnInit {
   selectedRun;
   workflowRuns;
   jobs;
+  selectedJob;
 
   // Fontawesome icons
   faCheck = faCheck;
@@ -51,6 +52,17 @@ export class ProjectComponent implements OnInit {
     }
 
     return faCircle;
+  }
+
+  getDate(date: string) {
+    let date1 = new Date(date);
+    return new Intl.DateTimeFormat('default', {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      minute: 'numeric',
+      hour: 'numeric'
+    }).format(date1);
   }
   
   async deselectRun() {
@@ -92,7 +104,7 @@ export class ProjectComponent implements OnInit {
     }
     
     this.http.jsonp(this.selectedRun.jobs_url, 'callback').subscribe(data => {
-      try {
+      try { // TODO: Select job method
         this.jobs = data["data"]["jobs"];
       } catch {
         this.jobs = null;
