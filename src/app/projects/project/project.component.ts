@@ -15,11 +15,13 @@ import {
 })
 export class ProjectComponent implements OnInit {
   projectName;
-  runs;
-  selectedRun;
-  workflowRuns;
-  jobs;
-  selectedJob;
+  runs; // /repos{/user}{/repo}/action/runs
+  workflowRuns; // this.runs.workflow_runs
+  selectedRun; // this.workflowRuns[n]
+  jobCount; // </repos{/user}{/repo}/action/runs{/run_id}/jobs>.total_count
+  jobs; // </repos{/user}{/repo}/action/runs{/run_id}/jobs>.jobs
+  selectedJob; // this.jobs[o]
+  selectedJobNum; // (^) o
 
   // Fontawesome icons
   faCheck = faCheck;
@@ -105,9 +107,16 @@ export class ProjectComponent implements OnInit {
     
     this.http.jsonp(this.selectedRun.jobs_url, 'callback').subscribe(data => {
       try { // TODO: Select job method
+        this.jobCount = data["data"]["total_count"];
         this.jobs = data["data"]["jobs"];
       } catch {
+        this.jobCount = 0;
         this.jobs = null;
+      }
+
+      if (this.jobCount != 0) { // TODO: Replace this with an actual function
+        this.selectedJobNum = 1;
+        this.selectedJob = this.jobs[this.selectedJobNum - 1];
       }
     });
   }

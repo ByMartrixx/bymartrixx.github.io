@@ -6,35 +6,44 @@
                 <a (click)="deselectRun()">{{ this.projectName }}</a>
             </li>
 
-            <li class="breadcrumb-item" *ngIf="this.selectedRun != null" [ngClass]="{'active': this.selectedJob == null}" aria-label="page">
+            <li class="breadcrumb-item active" *ngIf="this.selectedRun != null" aria-label="page">
                 #{{ this.selectedRun.run_number }}
             </li>
 
             <!-- If it exists, it should be active -->
-            <li class="breadcrumb-item active" *ngIf="this.selectedJob != null" aria-label="page">
+            <!-- <li class="breadcrumb-item active" *ngIf="this.selectedJob != null" aria-label="page">
                 {{ this.selectedJob.name }}
-            </li>
+            </li> -->
         </ol>
     </nav>
 
     <h4 class="text-center">Project Builds</h4>
-    <div class="runList m-2 col-md-3 col-sm-4 col-xs-5 w-20 p-2 text-center">
-        <div class="spinner-border m-auto text-primary" role="status" *ngIf="this.workflowRuns == null">
-            <span class="d-none">Loading...</span>
-        </div>
-        <div *ngIf="this.workflowRuns != null && this.runs.total_count == 0" class="text-info">
-            <i>There are no runs for this project :(</i>
-        </div>
 
-        <div class="scroll text-left" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
-            <div class="m-3 run" *ngFor="let workflowRun of this.workflowRuns; index as i">
-                <a [ngStyle]="{'color': getRunColor(workflowRun.conclusion)}"
-                [routerLink]="['/projects/project', this.projectName, workflowRun.run_number]">
-                    <fa-icon [icon]="getRunIcon(workflowRun.conclusion)"></fa-icon>
-                    #{{ workflowRun.run_number }}
-                </a>
-                <small class="text-muted">{{ this.getDate(workflowRun.created_at) }}</small>
+    <div class="row w-auto" id="runContainer">
+        <div class="col-md-3 col-sm-4 mb-3 h-100 p-1 text-center" id="runList">
+            <div class="spinner-border m-auto text-primary" role="status" *ngIf="this.workflowRuns == null">
+                <span class="d-none">Loading...</span>
             </div>
+
+            <div class="text-info" *ngIf="this.workflowRuns != null && this.runs.total_count == 0">
+                <i>There are no runs for this project :(</i>
+            </div>
+
+            <div class="overflow-auto h-100 text-left" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
+                <div class="m-2 mr-3 ml-3 run" *ngFor="let workflowRun of this.workflowRuns"><p>
+                    <a class="text-decoration-none" [routerLink]="['/projects/project', this.projectName, workflowRun.run_number]"
+                    [ngStyle]="{'color': getRunColor(workflowRun.conclusion)}">
+                        <fa-icon [icon]="getRunIcon(workflowRun.conclusion)"></fa-icon> #{{ workflowRun.run_number }}
+                    </a>
+                    <small class="text-muted">{{ getDate(workflowRun.created_at) }}</small>
+                </p></div>
+            </div>
+        </div>
+        <div class="col-md-9 col-sm-8 mb-3 h-100 text-left">
+            <p *ngIf="this.selectedRun == null">Please select a build</p>
+            <i class="text-info" *ngIf="this.selectedRun != null && this.jobCount == 0">There are no jobs for this build :(</i>
+            <!-- TODO: Nav tabs or similar -->
+            <p *ngIf="this.selectedRun != null && this.jobCount != 0">This is still ToDo. Please check later</p>
         </div>
     </div>
 </div>
