@@ -1,21 +1,28 @@
 .navbar {
-    background-image: linear-gradient(to right, #1a56c5, #4857c5, #6358c4, #7959c2, #8b5ac0);
+  background-image: linear-gradient(
+    to right,
+    #1a56c5,
+    #4857c5,
+    #6358c4,
+    #7959c2,
+    #8b5ac0
+  );
 }
 
 .navbar-brand img {
-    border-radius: 100%;
+  border-radius: 100%;
 }
 
 .navbar-toggler {
-    outline-color: #ffffff;
+  outline-color: #ffffff;
 }
 
 .nav-link {
-    margin: 0.5rem 0;
-    padding: 0.5rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
 }
 
 .nav-link:active,
 .nav-link.active-link {
-    background-color: #ffffff1a;    
+  background-color: #ffffff1a;
 }

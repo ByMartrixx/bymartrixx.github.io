@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
 import {
   faCheck,
   faCircle,
   faExclamationCircle,
-  faTimes
+  faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
-  styleUrls: ['./project.component.scss']
+  styleUrls: ['./project.component.scss'],
 })
 export class ProjectComponent implements OnInit {
   projectName;
@@ -31,30 +30,30 @@ export class ProjectComponent implements OnInit {
   faExclamationCircle = faExclamationCircle;
   faTimes = faTimes;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) { }
+  constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       this.loadProjectRuns(params['project']);
     });
   }
 
   getRunColor(runResult) {
-    if (runResult == "success") {
-      return "#28A745";
-    } else if (runResult == "failure") {
-      return "#CB2431";
+    if (runResult == 'success') {
+      return '#28A745';
+    } else if (runResult == 'failure') {
+      return '#CB2431';
     }
 
-    return "#959DA5";
+    return '#959DA5';
   }
 
   getRunIcon(runResult) {
-    if (runResult == "success") {
+    if (runResult == 'success') {
       return faCheck;
-    } else if (runResult == "failure") {
+    } else if (runResult == 'failure') {
       return faTimes;
-    } else if (runResult == "cancelled") {
+    } else if (runResult == 'cancelled') {
       return faExclamationCircle;
     }
 
@@ -68,7 +67,7 @@ export class ProjectComponent implements OnInit {
       month: 'numeric',
       year: 'numeric',
       minute: 'numeric',
-      hour: 'numeric'
+      hour: 'numeric',
     }).format(date1);
   }
 
@@ -81,24 +80,24 @@ export class ProjectComponent implements OnInit {
     let totalSeconds = seconds % 60;
     let totalMinutes = minutes % 60;
 
-    let str = "";
+    let str = '';
 
     if (hours > 0) {
-      str += hours + "h ";
+      str += hours + 'h ';
     }
     if (totalMinutes > 0) {
-      str += totalMinutes + "m ";
+      str += totalMinutes + 'm ';
     }
     if (totalSeconds > 0) {
-      str += totalSeconds + "s ";
+      str += totalSeconds + 's ';
     }
-    if (str == "") {
-      str = "0s";
+    if (str == '') {
+      str = '0s';
     }
 
     return str.trim();
   }
-  
+
   async deselectRun() {
     this.selectedRun = null;
     this.jobs = null;
@@ -117,17 +116,18 @@ export class ProjectComponent implements OnInit {
     this.deselectRun();
 
     this.projectName = repositoryName;
-    const baseUrl = 'https://api.github.com/repos/ByMartrixx/' + this.projectName;
+    const baseUrl =
+      'https://api.github.com/repos/ByMartrixx/' + this.projectName;
 
     // Request action runs
-    this.http.jsonp(baseUrl + '/actions/runs', 'callback').subscribe(data => {
-      this.runs = data["data"];
+    this.http.jsonp(baseUrl + '/actions/runs', 'callback').subscribe((data) => {
+      this.runs = data['data'];
       this.workflowRuns = this.runs.workflow_runs;
-      
-      this.route.params.subscribe(params => {
+
+      this.route.params.subscribe((params) => {
         var run = params['run'];
 
-        if (run == "latest") {
+        if (run == 'latest') {
           this.loadRun(0);
         } else if (run != undefined) {
           this.loadRun(this.runs['total_count'] - run);
@@ -145,15 +145,15 @@ export class ProjectComponent implements OnInit {
       return;
     }
 
-    this.selectedRun = this.workflowRuns[ run ];
+    this.selectedRun = this.workflowRuns[run];
     if (this.selectedRun == null) {
       return;
     }
-    
-    this.http.jsonp(this.selectedRun.jobs_url, 'callback').subscribe(data => {
+
+    this.http.jsonp(this.selectedRun.jobs_url, 'callback').subscribe((data) => {
       try {
-        this.jobCount = data["data"]["total_count"];
-        this.jobs = data["data"]["jobs"];
+        this.jobCount = data['data']['total_count'];
+        this.jobs = data['data']['jobs'];
       } catch {
         this.jobCount = 0;
         this.jobs = null;
@@ -163,7 +163,7 @@ export class ProjectComponent implements OnInit {
     });
 
     try {
-      window.scrollTo(0, document.getElementById("build-info").offsetWidth);
+      window.scrollTo(0, document.getElementById('build-info').offsetWidth);
     } catch (error) {}
   }
 
@@ -174,12 +174,11 @@ export class ProjectComponent implements OnInit {
       return;
     }
 
-    this.selectedJob = this.jobs[ job ];
+    this.selectedJob = this.jobs[job];
     if (this.selectedJob == null) {
       return;
     }
     this.selectedJobNum = job + 1;
     this.steps = this.selectedJob.steps;
   }
-
 }

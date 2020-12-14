@@ -1,59 +1,60 @@
 <div class="container">
-    <h2 class="text-center mt-4">Open source projects</h2>
-    <hr class="mb-5">
+  <h2 class="text-center mt-4">Open source projects</h2>
+  <hr class="mb-5">
 
-    <div *ngIf="this.repositories == null" class="d-flex justify-content-center">
-        <div class="spinner-border m-5 text-muted" role="status">
-            <span class="d-none">Loading...</span>
-        </div>
+  <div *ngIf="this.repositories == null" class="d-flex justify-content-center">
+    <div class="spinner-border m-5 text-muted" role="status">
+      <span class="d-none">Loading...</span>
     </div>
+  </div>
 
 
-    <!-- Repositories cards -->
-    <div class="row row-cols-1 row-cols-md-2 repositories" *ngIf="this.repositories != null">
-        <div class="col mb-4" *ngFor="let repository of this.repositories">
-            <div class="card repository">
-                <div class="card-body">
-                    <!-- Repository name -->
-                    <h4 class="card-title">
-                        <a [routerLink]="['/projects/project', repository.name]" class="link">{{ repository.name }} </a>
-                        <fa-icon *ngIf="repository.fork" [icon]="faCodeBranch"></fa-icon>
-                        <fa-icon *ngIf="repository.archive" [icon]="faArchive"></fa-icon>
-                        <small>
-                            <a [routerLink]="['/projects/project', repository.name, 'latest']" style="float: right;">Latest build</a>
-                        </small>
-                    </h4>
+  <!-- Repositories cards -->
+  <div class="row row-cols-1 row-cols-md-2 repositories" *ngIf="this.repositories != null">
+    <div class="col mb-4" *ngFor="let repository of this.repositories">
+      <div class="card repository">
+        <div class="card-body">
+          <!-- Repository name -->
+          <h4 class="card-title">
+            <a [routerLink]="['/projects/project', repository.name]" class="link">{{ repository.name }} </a>
+            <fa-icon *ngIf="repository.fork" [icon]="faCodeBranch"></fa-icon>
+            <fa-icon *ngIf="repository.archive" [icon]="faArchive"></fa-icon>
+            <small>
+              <a [routerLink]="['/projects/project', repository.name, 'latest']" style="float: right;">Latest build</a>
+            </small>
+          </h4>
 
-                    <!-- Repository License -->
-                    <small class="card-subtitle text-muted" *ngIf="repository.license != null">
-                        <fa-icon [icon]="faBalanceScale"></fa-icon><i> {{ repository.license.name }}</i>
-                    </small>
+          <!-- Repository License -->
+          <small class="card-subtitle text-muted" *ngIf="repository.license != null">
+            <fa-icon [icon]="faBalanceScale"></fa-icon><i> {{ repository.license.name }}</i>
+          </small>
 
-                    <!-- Repository description -->
-                    <div class="card-text" [ngSwitch]="repository.description">
-                        <p *ngSwitchCase="null"><i>No description provided.</i></p>
-                        <p *ngSwitchDefault>{{ repository.description }}</p>
-                    </div>
+          <!-- Repository description -->
+          <div class="card-text" [ngSwitch]="repository.description">
+            <p *ngSwitchCase="null"><i>No description provided.</i></p>
+            <p *ngSwitchDefault>{{ repository.description }}</p>
+          </div>
 
-                    <a href="{{ repository.html_url }}" class="card-link">Project Github</a>
-                    <a [routerLink]="['/projects/project', repository.name]" class="card-link">Project Builds</a>
-                    <a href="{{ repository.homepage }}" *ngIf="repository.homepage != null && repository.homepage != ''" class="card-link">
-                        Project Site
-                    </a>
-                </div>
-
-                <!-- Repository info -->
-                <div class="card-footer text-muted"><small>
-                    <fa-icon [icon]="faStar"></fa-icon> {{ repository.stargazers_count }}
-                    <i *ngIf="repository.language != null" [ngStyle]="{ 'color': getColorForLang(repository.language) }">
-                        <fa-icon [icon]="faCircle"></fa-icon>
-                            {{ repository.language }}
-                    </i>
-                    <span *ngIf="repository.forks > 0">
-                        <fa-icon [icon]="faCodeBranch"></fa-icon> {{ repository.forks }}
-                    </span>
-                </small></div>
-            </div>
+          <a href="{{ repository.html_url }}" class="card-link">Project Github</a>
+          <a [routerLink]="['/projects/project', repository.name]" class="card-link">Project Builds</a>
+          <a href="{{ repository.homepage }}" *ngIf="repository.homepage != null && repository.homepage != ''"
+            class="card-link">
+            Project Site
+          </a>
         </div>
+
+        <!-- Repository info -->
+        <div class="card-footer text-muted"><small>
+            <fa-icon [icon]="faStar"></fa-icon> {{ repository.stargazers_count }}
+            <i *ngIf="repository.language != null" [ngStyle]="{ 'color': getColorForLang(repository.language) }">
+              <fa-icon [icon]="faCircle"></fa-icon>
+              {{ repository.language }}
+            </i>
+            <span *ngIf="repository.forks > 0">
+              <fa-icon [icon]="faCodeBranch"></fa-icon> {{ repository.forks }}
+            </span>
+          </small></div>
+      </div>
     </div>
+  </div>
 </div>
