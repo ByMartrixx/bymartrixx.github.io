@@ -23,6 +23,7 @@ export class ProjectComponent implements OnInit {
   jobs; // </repos{/user}{/repo}/action/runs{/run_id}/jobs>.jobs
   selectedJob; // this.jobs[o]
   selectedJobNum; // (^) o
+  steps; // this.selectedJob.steps
 
   // Fontawesome icons
   faCheck = faCheck;
@@ -103,11 +104,13 @@ export class ProjectComponent implements OnInit {
     this.jobs = null;
     this.selectedJob = null;
     this.selectedJobNum = 1;
+    this.steps = null;
   }
 
   async deselectJob() {
     this.selectedJob = null;
     this.selectedJobNum = 1;
+    this.steps = null;
   }
 
   loadProjectRuns(repositoryName) {
@@ -176,6 +179,7 @@ export class ProjectComponent implements OnInit {
       return;
     }
     this.selectedJobNum = job + 1;
+    this.steps = this.selectedJob.steps;
   }
 
 }

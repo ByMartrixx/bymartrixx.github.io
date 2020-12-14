@@ -1,5 +1,5 @@
 <div class="container">
-    <nav aria-label="breadcrumb" class="mt-5">
+    <nav aria-label="breadcrumb" class="mt-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item" [ngClass]="{'active': this.selectedRun == null}" aria-label="page"
             [routerLink]="['/projects/project', this.projectName]">
@@ -80,6 +80,24 @@
                     <div class="spinner-border m-auto text-primary" role="status" *ngIf="this.jobs == null">
                         <span class="d-none">Loading...</span>
                     </div>
+                    <div class="btn-group" role="group" aria-label="Job selection" *ngIf="this.jobs != null">
+                        <button class="btn btn-outline-dark" type="button" *ngFor="let job of this.jobs; index as jobIndex"
+                        [ngStyle]="{'color': getRunColor(job.conclusion)}" [ngClass]="{'active': this.selectedJobNum == jobIndex + 1}"
+                        (click)="loadJob(jobIndex)">
+                            <fa-icon [icon]="getRunIcon(job.conclusion)"></fa-icon> {{ job.name }}
+                        </button>
+                    </div>
+                    <div class="my-4 w-100" *ngIf="this.selectedJob != null">
+                        <ul class="list-group text-left" *ngIf="this.steps != null">
+                            <li class="list-group-item" *ngFor="let step of steps" [ngStyle]="{'color': getRunColor(step.conclusion)}">
+                                <fa-icon [icon]="getRunIcon(step.conclusion)"></fa-icon> {{ step.name }}
+                                <i class="text-muted" style="float: right;">{{ getDuration(step.started_at, step.completed_at) }}</i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
                 </div>
             </div>
         </div>
