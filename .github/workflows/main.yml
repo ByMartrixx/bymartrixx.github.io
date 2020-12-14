@@ -1,29 +1,19 @@
-name: CI
+name: Build and Deploy
 
 on:
   push:
-    branches: [ master ]
-
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up NodeJs
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
-      - name: Install Angular
-        run: npm install -g @angular/cli
-
-      - run: npm install
-      - name: Production Build
-        run: ng build --prod --base-href https://bymartrixx.github.io
-      - name: Deploy to Github Pages
-        if: success()
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: docs/
+    - uses: actions/checkout@v2
+    - name: All things angular
+      uses: AhsanAyaz/angular-deploy-gh-pages-actions@[version] ## replace by latest version without it you will see Expected format {org}/{repo}[/path]@ref. Actual 'AhsanAyaz/angular-deploy-gh-pages-actions',Input string was not in a correct format.
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }} # see the Configuration section for how you can create secrets
+        base_href: /   # make sure this corresponds to https://<your_username>.github.io/<base_href>/
+        deploy_branch: gh-pages # The branch the action should deploy to.
+        angular_dist_build_folder: docs/ # The folder where your project is supposed to be after running ng build by the action.
