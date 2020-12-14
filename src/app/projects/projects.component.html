@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <!-- Repository name -->
                     <h4 class="card-title">
-                        <a href="{{ repository.html_url }}" class="link">{{ repository.name }} </a>
+                        <a [routerLink]="['/projects/project', repository.name]" class="link">{{ repository.name }} </a>
                         <fa-icon *ngIf="repository.fork" [icon]="faCodeBranch"></fa-icon>
                         <fa-icon *ngIf="repository.archive" [icon]="faArchive"></fa-icon>
                     </h4>
@@ -32,6 +32,7 @@
                         <p *ngSwitchDefault>{{ repository.description }}</p>
                     </div>
 
+                    <a href="{{ repository.html_url }}" class="card-link">Project Github</a>
                     <a [routerLink]="['/projects/project', repository.name]" class="card-link">Project Builds</a>
                     <a href="{{ repository.homepage }}" *ngIf="repository.homepage != null && repository.homepage != ''" class="card-link">
                         Project Site
