@@ -23,8 +23,8 @@
     </div>
 
     <div class="row w-auto" id="runContainer">
-        <div class="col-md-3 col-sm-4 mb-3 h-100 p-1 text-center" id="runList">
-            <div class="spinner-border m-auto text-primary" role="status" *ngIf="this.workflowRuns == null">
+        <div class="col-md-3 col-sm-4 mb-3 h-100 p-1 text-center" id="runList" [ngClass]="{'d-flex': this.workflowRuns == null}">
+            <div class="spinner-border m-auto text-primary align-self-center" role="status" *ngIf="this.workflowRuns == null">
                 <span class="d-none">Loading...</span>
             </div>
 
@@ -43,7 +43,8 @@
             </div>
         </div>
         <div class="col-md-9 col-sm-8 mb-3 h-100 text-center" id="build-info">
-            <p *ngIf="this.selectedRun == null">Please select a build</p>
+            <p *ngIf="this.selectedRun == null && this.runs.total_count != 0">Please select a build</p>
+
             <div class="run-content" *ngIf="this.selectedRun != null">
                 <a href="{{ this.selectedRun.html_url }}"><small>Build on Github</small></a>
                 <h6>
@@ -76,10 +77,11 @@
 
                 <i class="text-info" *ngIf="this.selectedRun != null && this.jobCount == 0">There are no jobs for this build :(</i>
 
-                <div class="text-center" *ngIf="this.selectedRun != null && this.jobCount != 0">
-                    <div class="spinner-border m-auto text-primary" role="status" *ngIf="this.jobs == null">
+                <div class="text-center" *ngIf="this.selectedRun != null && this.jobCount != 0" [ngClass]="{'d-flex': this.jobs == null}">
+                    <div class="spinner-border m-auto text-primary align-self-center" role="status" *ngIf="this.jobs == null">
                         <span class="d-none">Loading...</span>
                     </div>
+
                     <div class="btn-group" role="group" aria-label="Job selection" *ngIf="this.jobs != null">
                         <button class="btn btn-outline-dark" type="button" *ngFor="let job of this.jobs; index as jobIndex"
                         [ngStyle]="{'color': getRunColor(job.conclusion)}" [ngClass]="{'active': this.selectedJobNum == jobIndex + 1}"
@@ -87,6 +89,7 @@
                             <fa-icon [icon]="getRunIcon(job.conclusion)"></fa-icon> {{ job.name }}
                         </button>
                     </div>
+
                     <div class="my-4 w-100" *ngIf="this.selectedJob != null">
                         <ul class="list-group text-left" *ngIf="this.steps != null">
                             <li class="list-group-item" *ngFor="let step of steps" [ngStyle]="{'color': getRunColor(step.conclusion)}">
@@ -95,9 +98,6 @@
                             </li>
                         </ul>
                     </div>
-                </div>
-
-                <div>
                 </div>
             </div>
         </div>

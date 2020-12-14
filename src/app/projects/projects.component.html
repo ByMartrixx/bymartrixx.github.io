@@ -19,6 +19,9 @@
                         <a [routerLink]="['/projects/project', repository.name]" class="link">{{ repository.name }} </a>
                         <fa-icon *ngIf="repository.fork" [icon]="faCodeBranch"></fa-icon>
                         <fa-icon *ngIf="repository.archive" [icon]="faArchive"></fa-icon>
+                        <small>
+                            <a [routerLink]="['/projects/project', repository.name, 'latest']" style="float: right;">Latest build</a>
+                        </small>
                     </h4>
 
                     <!-- Repository License -->
