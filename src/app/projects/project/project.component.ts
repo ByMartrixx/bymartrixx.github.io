@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import {
   faCheck,
   faCircle,
+  faExclamationCircle,
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -26,6 +27,7 @@ export class ProjectComponent implements OnInit {
   // Fontawesome icons
   faCheck = faCheck;
   faCircle = faCircle;
+  faExclamationCircle = faExclamationCircle;
   faTimes = faTimes;
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
@@ -51,6 +53,8 @@ export class ProjectComponent implements OnInit {
       return faCheck;
     } else if (runResult == "failure") {
       return faTimes;
+    } else if (runResult == "cancelled") {
+      return faExclamationCircle;
     }
 
     return faCircle;
@@ -66,13 +70,49 @@ export class ProjectComponent implements OnInit {
       hour: 'numeric'
     }).format(date1);
   }
+
+  getDuration(dateStart: string, dateEnd: string) {
+    let millis = new Date(dateEnd).getTime() - new Date(dateStart).getTime();
+    let seconds = Math.floor(millis / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+
+    let totalSeconds = seconds % 60;
+    let totalMinutes = minutes % 60;
+
+    let str = "";
+
+    if (hours > 0) {
+      str += hours + "h ";
+    }
+    if (totalMinutes > 0) {
+      str += totalMinutes + "m ";
+    }
+    if (totalSeconds > 0) {
+      str += totalSeconds + "s ";
+    }
+    if (str == "") {
+      str = "0s";
+    }
+
+    return str.trim();
+  }
   
   async deselectRun() {
     this.selectedRun = null;
     this.jobs = null;
+    this.selectedJob = null;
+    this.selectedJobNum = 1;
+  }
+
+  async deselectJob() {
+    this.selectedJob = null;
+    this.selectedJobNum = 1;
   }
 
   loadProjectRuns(repositoryName) {
+    this.deselectRun();
+
     this.projectName = repositoryName;
     const baseUrl = 'https://api.github.com/repos/ByMartrixx/' + this.projectName;
 
@@ -94,9 +134,11 @@ export class ProjectComponent implements OnInit {
   }
 
   loadRun(run) {
+    this.deselectRun();
+
     let count = this.runs['total_count'];
 
-    if (count == null) {
+    if (count == null || count == 0) {
       return;
     }
 
@@ -106,7 +148,7 @@ export class ProjectComponent implements OnInit {
     }
     
     this.http.jsonp(this.selectedRun.jobs_url, 'callback').subscribe(data => {
-      try { // TODO: Select job method
+      try {
         this.jobCount = data["data"]["total_count"];
         this.jobs = data["data"]["jobs"];
       } catch {
@@ -114,11 +156,26 @@ export class ProjectComponent implements OnInit {
         this.jobs = null;
       }
 
-      if (this.jobCount != 0) { // TODO: Replace this with an actual function
-        this.selectedJobNum = 1;
-        this.selectedJob = this.jobs[this.selectedJobNum - 1];
-      }
+      this.loadJob(0);
     });
+
+    try {
+      window.scrollTo(0, document.getElementById("build-info").offsetWidth);
+    } catch (error) {}
+  }
+
+  loadJob(job) {
+    this.deselectJob();
+
+    if (this.jobCount == 0) {
+      return;
+    }
+
+    this.selectedJob = this.jobs[ job ];
+    if (this.selectedJob == null) {
+      return;
+    }
+    this.selectedJobNum = job + 1;
   }
 
 }

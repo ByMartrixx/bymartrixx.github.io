@@ -17,7 +17,10 @@
         </ol>
     </nav>
 
-    <h4 class="text-center">Project Builds</h4>
+    <div class="d-flex justify-content-between flex-wrap-reverse text-center">
+        <h4>{{ this.projectName }} Builds</h4>
+        <a href="https://github.com/ByMartrixX/{{ this.projectName }}">Github Repository</a>
+    </div>
 
     <div class="row w-auto" id="runContainer">
         <div class="col-md-3 col-sm-4 mb-3 h-100 p-1 text-center" id="runList">
@@ -30,7 +33,7 @@
             </div>
 
             <div class="overflow-auto h-100 text-left" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
-                <div class="m-2 mr-3 ml-3 run" *ngFor="let workflowRun of this.workflowRuns"><p>
+                <div class="m-2 mx-3 run" *ngFor="let workflowRun of this.workflowRuns"><p>
                     <a class="text-decoration-none" [routerLink]="['/projects/project', this.projectName, workflowRun.run_number]"
                     [ngStyle]="{'color': getRunColor(workflowRun.conclusion)}">
                         <fa-icon [icon]="getRunIcon(workflowRun.conclusion)"></fa-icon> #{{ workflowRun.run_number }}
@@ -39,11 +42,46 @@
                 </p></div>
             </div>
         </div>
-        <div class="col-md-9 col-sm-8 mb-3 h-100 text-left">
+        <div class="col-md-9 col-sm-8 mb-3 h-100 text-center" id="build-info">
             <p *ngIf="this.selectedRun == null">Please select a build</p>
-            <i class="text-info" *ngIf="this.selectedRun != null && this.jobCount == 0">There are no jobs for this build :(</i>
-            <!-- TODO: Nav tabs or similar -->
-            <p *ngIf="this.selectedRun != null && this.jobCount != 0">This is still ToDo. Please check later</p>
+            <div class="run-content" *ngIf="this.selectedRun != null">
+                <a href="{{ this.selectedRun.html_url }}"><small>Build on Github</small></a>
+                <h6>
+                    <fa-icon [icon]="getRunIcon(this.selectedRun.conclusion)"[ngStyle]="{'color': getRunColor(this.selectedRun.conclusion)}">
+                    </fa-icon> Build #{{ this.selectedRun.run_number }}: {{ this.selectedRun.name }}
+                </h6>
+
+                <div class="d-flex flex-wrap justify-content-center" id="extra-info">
+                    <ul class="list-inline mx-1">
+                        <li class="text-muted">Commit message</li>
+                        <li>{{ this.selectedRun.head_commit.message }}</li>
+                    </ul>
+                    <ul class="list-inline mx-1">
+                        <li class="text-muted">Commit hash</li>
+                        <li><code title="{{ this.selectedRun.head_sha }}">{{ this.selectedRun.head_sha.substring(0, 7) }}</code></li>
+                    </ul>
+                    <ul class="list-inline mx-1">
+                        <li class="text-muted">Commit Branch</li>
+                        <li><code>{{ this.selectedRun.head_branch }}</code></li>
+                    </ul>
+                    <ul class="list-inline mx-1">
+                        <li class="text-muted">Build Duration</li>
+                        <li>{{getDuration(this.selectedRun.created_at, this.selectedRun.updated_at)}}</li>
+                    </ul>
+                    <ul class="list-inline mx-1">
+                        <li class="text-muted">Commit Author</li>
+                        <li class="fw-bold">{{ this.selectedRun.head_commit.author.name }}</li>
+                    </ul>
+                </div>
+
+                <i class="text-info" *ngIf="this.selectedRun != null && this.jobCount == 0">There are no jobs for this build :(</i>
+
+                <div class="text-center" *ngIf="this.selectedRun != null && this.jobCount != 0">
+                    <div class="spinner-border m-auto text-primary" role="status" *ngIf="this.jobs == null">
+                        <span class="d-none">Loading...</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
