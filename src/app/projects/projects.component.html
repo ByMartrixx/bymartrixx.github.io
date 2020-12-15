@@ -4,7 +4,7 @@
 
   <div *ngIf="this.repositories == null" class="d-flex justify-content-center">
     <div class="spinner-border m-5 text-muted" role="status">
-      <span class="d-none">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
@@ -16,12 +16,12 @@
         <div class="card-body">
           <!-- Repository name -->
           <h4 class="card-title">
-            <a [routerLink]="['/projects/project', repository.name]" class="link">{{ repository.name }} </a>
+            <a class="link text-decoration-none"
+              [routerLink]="['/projects/project', repository.name]">{{ repository.name }} </a>
             <fa-icon *ngIf="repository.fork" [icon]="faCodeBranch"></fa-icon>
             <fa-icon *ngIf="repository.archive" [icon]="faArchive"></fa-icon>
-            <small>
-              <a [routerLink]="['/projects/project', repository.name, 'latest']" style="float: right;">Latest build</a>
-            </small>
+            <a class="float-end text-decoration-none fs-6"
+              [routerLink]="['/projects/project', repository.name, 'latest']">Latest build</a>
           </h4>
 
           <!-- Repository License -->

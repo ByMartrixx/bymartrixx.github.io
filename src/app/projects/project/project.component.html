@@ -1,9 +1,12 @@
 <div class="container">
   <nav aria-label="breadcrumb" class="mt-4">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item" [ngClass]="{'active': this.selectedRun == null}" aria-label="page"
-        [routerLink]="['/projects/project', this.projectName]">
-        <a (click)="deselectRun()">{{ this.projectName }}</a>
+    <ol class="breadcrumb py-2 px-3 rounded">
+      <li class="breadcrumb-item" aria-label="page">
+        <a class="text-decoration-none text-dark" routerLink="/projects">Projects</a>
+      </li>
+      <li class="breadcrumb-item" [ngClass]="{'active': this.selectedRun == null}" aria-label="page">
+        <a class="text-decoration-none text-dark" [routerLink]="['/projects/project', this.projectName]"
+          (click)="deselectRun()">{{ this.projectName }}</a>
       </li>
 
       <li class="breadcrumb-item active" *ngIf="this.selectedRun != null" aria-label="page">
@@ -33,7 +36,7 @@
         <i>There are no runs for this project :(</i>
       </div>
 
-      <div class="overflow-auto h-100 text-left" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
+      <div class="overflow-auto h-100 text-start" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
         <div class="m-2 mx-3 run" *ngFor="let workflowRun of this.workflowRuns">
           <p>
             <a class="text-decoration-none"
@@ -73,11 +76,11 @@
           </ul>
           <ul class="list-inline mx-1">
             <li class="text-muted">Build Duration</li>
-            <li>{{getDuration(this.selectedRun.created_at, this.selectedRun.updated_at)}}</li>
+            <li>{{ getDuration(this.selectedRun.created_at, this.selectedRun.updated_at) }}</li>
           </ul>
           <ul class="list-inline mx-1">
             <li class="text-muted">Commit Author</li>
-            <li class="fw-bold">{{ this.selectedRun.head_commit.author.name }}</li>
+            <li>{{ this.selectedRun.head_commit.author.name }}</li>
           </ul>
         </div>
 
@@ -97,18 +100,19 @@
               <fa-icon [icon]="getRunIcon(job.conclusion)"></fa-icon> {{ job.name }}
             </button>
           </div>
-          <div *ngIf="this.jobs != null && this.jobCount == 1"
-            style="line-height: 1.5; font-size: 1rem; font-weight: 400;"
+
+          <div class="bg-dark d-inline-flex fs-6 fw-normal lh-base px-3 py-2 rounded"
+            *ngIf="this.jobs != null && this.jobCount == 1"
             [ngStyle]="{'color': getRunColor(this.selectedJob.conclusion)}">
             <fa-icon [icon]="getRunIcon(this.selectedJob.conclusion)"></fa-icon> {{ this.selectedJob.name }}
           </div>
 
           <div class="my-4 w-100" *ngIf="this.selectedJob != null">
-            <ul class="list-group text-left" *ngIf="this.steps != null">
+            <ul class="list-group text-start" *ngIf="this.steps != null">
               <li class="list-group-item" *ngFor="let step of steps"
                 [ngStyle]="{'color': getRunColor(step.conclusion)}">
                 <fa-icon [icon]="getRunIcon(step.conclusion)"></fa-icon> {{ step.name }}
-                <i class="text-muted" style="float: right;">{{ getDuration(step.started_at, step.completed_at) }}</i>
+                <i class="text-muted float-end">{{ getDuration(step.started_at, step.completed_at) }}</i>
               </li>
             </ul>
           </div>

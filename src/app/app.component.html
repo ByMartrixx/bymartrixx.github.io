@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg px-3">
   <a class="navbar-brand" routerLink="">
-    <img src="../assets/logo.png" width="40px">
+    <img class="rounded-circle" src="../assets/logo.png" width="40px">
   </a>
 
   <button class="navbar-toggler text-white" type="button" (click)="menuCollapsed = !menuCollapsed">
@@ -9,13 +9,13 @@
 
   <div [ngbCollapse]="menuCollapsed" class="collapse navbar-collapse">
     <!-- Pages -->
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav me-auto">
       <li class="nav-item">
-        <a class="nav-link text-white" routerLink="" (click)="menuCollapsed = true"
+        <a class="nav-link m-2 p-2 text-white" routerLink="" (click)="menuCollapsed = true"
           [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active-link">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" routerLink="/projects" (click)="menuCollapsed = true"
+        <a class="nav-link m-2 p-2 text-white" routerLink="/projects" (click)="menuCollapsed = true"
           [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active-link">Projects</a>
       </li>
     </ul>
