@@ -90,12 +90,17 @@
             <span class="d-none">Loading...</span>
           </div>
 
-          <div class="btn-group" role="group" aria-label="Job selection" *ngIf="this.jobs != null">
+          <div class="btn-group" role="group" aria-label="Job selection" *ngIf="this.jobs != null && this.jobCount > 1">
             <button class="btn btn-outline-dark" type="button" *ngFor="let job of this.jobs; index as jobIndex"
               [ngStyle]="{'color': getRunColor(job.conclusion)}"
               [ngClass]="{'active': this.selectedJobNum == jobIndex + 1}" (click)="loadJob(jobIndex)">
               <fa-icon [icon]="getRunIcon(job.conclusion)"></fa-icon> {{ job.name }}
             </button>
+          </div>
+          <div *ngIf="this.jobs != null && this.jobCount == 1"
+            style="line-height: 1.5; font-size: 1rem; font-weight: 400;"
+            [ngStyle]="{'color': getRunColor(this.selectedJob.conclusion)}">
+            <fa-icon [icon]="getRunIcon(this.selectedJob.conclusion)"></fa-icon> {{ this.selectedJob.name }}
           </div>
 
           <div class="my-4 w-100" *ngIf="this.selectedJob != null">
