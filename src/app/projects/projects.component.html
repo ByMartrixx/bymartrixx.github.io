@@ -2,7 +2,12 @@
   <h2 class="text-center mt-4">Open source projects</h2>
   <hr class="mb-5">
 
-  <div *ngIf="this.repositories == null" class="d-flex justify-content-center">
+  <div class="d-flex justify-content-center" *ngIf="this.rateLimited">
+    <h2>You have been rate limited :(</h2>
+    <h4>Please try again in {{ getDuration(this.rateLimitResetTimeRemaining) }}</h4>
+  </div>
+
+  <div class="d-flex justify-content-center" *ngIf="this.repositories == null && !this.rateLimited">
     <div class="spinner-border m-5 text-muted" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>

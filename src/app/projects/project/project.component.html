@@ -28,8 +28,13 @@
   <div class="row w-auto" id="runContainer">
     <div class="col-md-3 col-sm-4 mb-3 h-100 p-1 text-center" id="runList"
       [ngClass]="{'d-flex': this.workflowRuns == null}">
-      <div class="spinner-border m-auto text-primary align-self-center" role="status" *ngIf="this.workflowRuns == null">
+      <div class="spinner-border m-auto text-primary align-self-center" role="status"
+        *ngIf="this.workflowRuns == null && !this.rateLimited">
         <span class="d-none">Loading...</span>
+      </div>
+      <div class="align-self-center" *ngIf="this.workflowRuns == null && this.rateLimited">
+        <h4>You have been rate limited :(</h4>
+        <h6>Please try again in {{ getDurationFromS(this.rateLimitResetTimeRemaining) }}</h6>
       </div>
 
       <div class="text-info" *ngIf="this.workflowRuns != null && this.runs.total_count == 0">
@@ -89,8 +94,13 @@
 
         <div class="text-center" *ngIf="this.selectedRun != null && this.jobCount != 0"
           [ngClass]="{'d-flex': this.jobs == null}">
-          <div class="spinner-border m-auto text-primary align-self-center" role="status" *ngIf="this.jobs == null">
+          <div class="spinner-border m-auto text-primary align-self-center" role="status"
+            *ngIf="this.jobs == null && !this.rateLimited">
             <span class="d-none">Loading...</span>
+          </div>
+          <div class="align-self-center" *ngIf="this.jobs == null && this.rateLimited">
+            <h2>You have been rate limited :(</h2>
+            <h4>Please try again in {{ getDurationFromS(this.rateLimitResetTimeRemaining) }}</h4>
           </div>
 
           <div class="btn-group" role="group" aria-label="Job selection" *ngIf="this.jobs != null && this.jobCount > 1">

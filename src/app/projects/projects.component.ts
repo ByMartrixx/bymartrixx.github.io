@@ -10,6 +10,7 @@ import {
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import colors from '../../assets/colors.json';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-projects',
@@ -18,6 +19,10 @@ import colors from '../../assets/colors.json';
 })
 export class ProjectsComponent implements OnInit {
   public repositories;
+
+  rateLimited;
+  rateLimitReset;
+  rateLimitResetTimeRemaining;
 
   // Fontawesome icons
   faArchive = faArchive;
@@ -29,12 +34,24 @@ export class ProjectsComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    // TODO: use http.get instead of http.jsonp
     this.http
-      .jsonp('https://api.github.com/users/ByMartrixx/repos', 'callback')
+      .get('https://api.github.com/users/ByMartrixx/repos', {
+        observe: 'response',
+      })
       .pipe(catchError(this.handleError))
-      .subscribe((data) => {
-        this.repositories = data['data'];
+      .subscribe((response) => {
+        const rateLimitRemaining = parseInt(
+          response.headers.get('X-Ratelimit-Remaining')
+        );
+        this.rateLimitReset = response.headers.get('X-Ratelimit-Reset');
+
+        this.rateLimited = rateLimitRemaining <= 0;
+        this.rateLimitResetTimeRemaining =
+          this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+
+        if (!this.rateLimited) {
+          this.repositories = response.body;
+        }
       });
   }
 
@@ -61,5 +78,9 @@ export class ProjectsComponent implements OnInit {
     } else {
       return '#F2F2F2';
     }
+  }
+
+  getDuration(seconds: number): string {
+    return AppComponent.getDurationFromS(seconds);
   }
 }

@@ -7,6 +7,7 @@ import {
   faExclamationCircle,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'app-project',
@@ -23,6 +24,10 @@ export class ProjectComponent implements OnInit {
   selectedJob; // this.jobs[o]
   selectedJobNum; // (^) o
   steps; // this.selectedJob.steps
+
+  rateLimited;
+  rateLimitReset;
+  rateLimitResetTimeRemaining;
 
   // Fontawesome icons
   faCheck = faCheck;
@@ -71,31 +76,14 @@ export class ProjectComponent implements OnInit {
     }).format(date1);
   }
 
-  getDuration(dateStart: string, dateEnd: string) {
-    let millis = new Date(dateEnd).getTime() - new Date(dateStart).getTime();
-    let seconds = Math.floor(millis / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
+  getDuration(dateStart: string, dateEnd: string): string {
+    return AppComponent.getDurationFromMS(
+      new Date(dateEnd).getTime() - new Date(dateStart).getTime()
+    );
+  }
 
-    let totalSeconds = seconds % 60;
-    let totalMinutes = minutes % 60;
-
-    let str = '';
-
-    if (hours > 0) {
-      str += hours + 'h ';
-    }
-    if (totalMinutes > 0) {
-      str += totalMinutes + 'm ';
-    }
-    if (totalSeconds > 0) {
-      str += totalSeconds + 's ';
-    }
-    if (str == '') {
-      str = '0s';
-    }
-
-    return str.trim();
+  getDurationFromS(seconds: number): string {
+    return AppComponent.getDurationFromS(seconds);
   }
 
   async deselectRun() {
@@ -120,20 +108,33 @@ export class ProjectComponent implements OnInit {
       'https://api.github.com/repos/ByMartrixx/' + this.projectName;
 
     // Request action runs
-    this.http.jsonp(baseUrl + '/actions/runs', 'callback').subscribe((data) => {
-      this.runs = data['data'];
-      this.workflowRuns = this.runs.workflow_runs;
+    this.http
+      .get(baseUrl + '/actions/runs', { observe: 'response' })
+      .subscribe((response) => {
+        const rateLimitRemaining = parseInt(
+          response.headers.get('X-Ratelimit-Remaining')
+        );
+        this.rateLimitReset = response.headers.get('X-Ratelimit-Reset');
 
-      this.route.params.subscribe((params) => {
-        var run = params['run'];
+        this.rateLimited = rateLimitRemaining <= 0;
+        this.rateLimitResetTimeRemaining =
+          this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
 
-        if (run == 'latest') {
-          this.loadRun(0);
-        } else if (run != undefined) {
-          this.loadRun(this.runs['total_count'] - run);
+        if (!this.rateLimited) {
+          this.runs = response.body;
+          this.workflowRuns = this.runs.workflow_runs;
+
+          this.route.params.subscribe((params) => {
+            var run = params['run'];
+
+            if (run == 'latest') {
+              this.loadRun(0);
+            } else if (run != undefined) {
+              this.loadRun(this.runs['total_count'] - run);
+            }
+          });
         }
       });
-    });
   }
 
   loadRun(run) {
@@ -150,17 +151,30 @@ export class ProjectComponent implements OnInit {
       return;
     }
 
-    this.http.jsonp(this.selectedRun.jobs_url, 'callback').subscribe((data) => {
-      try {
-        this.jobCount = data['data']['total_count'];
-        this.jobs = data['data']['jobs'];
-      } catch {
-        this.jobCount = 0;
-        this.jobs = null;
-      }
+    this.http
+      .get(this.selectedRun.html_url, { observe: 'response' })
+      .subscribe((response) => {
+        const rateLimitRemaining = parseInt(
+          response.headers.get('X-Ratelimit-Remaining')
+        );
+        this.rateLimitReset = response.headers.get('X-Ratelimit-Reset');
 
-      this.loadJob(0);
-    });
+        this.rateLimited = rateLimitRemaining <= 0;
+        this.rateLimitResetTimeRemaining =
+          this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+
+        if (!this.rateLimited) {
+          try {
+            this.jobCount = response.body['total_count'];
+            this.jobs = response.body['jobs'];
+          } catch {
+            this.jobCount = 0;
+            this.jobs = null;
+          }
+
+          this.loadJob(0);
+        }
+      });
 
     try {
       window.scrollTo(0, document.getElementById('build-info').offsetWidth);
