@@ -43,17 +43,19 @@ export class ProjectComponent implements OnInit {
     });
   }
 
-  getRunColor(runResult) {
+  getColor(runResult) {
     if (runResult == 'success') {
       return '#28A745';
     } else if (runResult == 'failure') {
       return '#CB2431';
+    } else if (runResult == 'in_progress') {
+      return "#dbab0a";
     }
 
     return '#959DA5';
   }
 
-  getRunIcon(runResult) {
+  getIcon(runResult) {
     if (runResult == 'success') {
       return faCheck;
     } else if (runResult == 'failure') {

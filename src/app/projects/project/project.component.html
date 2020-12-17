@@ -38,7 +38,7 @@
       </div>
 
       <div class="text-info" *ngIf="this.workflowRuns != null && this.runs.total_count == 0">
-        <i>There are no runs for this project :(</i>
+        <i>There are no builds for this project :(</i>
       </div>
 
       <div class="overflow-auto h-100 text-start" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
@@ -46,8 +46,8 @@
           <p>
             <a class="text-decoration-none"
               [routerLink]="['/projects/project', this.projectName, workflowRun.run_number]"
-              [ngStyle]="{'color': getRunColor(workflowRun.conclusion)}">
-              <fa-icon [icon]="getRunIcon(workflowRun.conclusion)"></fa-icon> #{{ workflowRun.run_number }}
+              [ngStyle]="{'color': getColor(workflowRun.conclusion)}">
+              <fa-icon [icon]="getIcon(workflowRun.conclusion)"></fa-icon> #{{ workflowRun.run_number }}
             </a>
             <small class="text-muted">{{ getDate(workflowRun.created_at) }}</small>
           </p>
@@ -60,8 +60,8 @@
       <div class="run-content" *ngIf="this.selectedRun != null">
         <a href="{{ this.selectedRun.html_url }}"><small>Build on Github</small></a>
         <h6>
-          <fa-icon [icon]="getRunIcon(this.selectedRun.conclusion)"
-            [ngStyle]="{'color': getRunColor(this.selectedRun.conclusion)}">
+          <fa-icon [icon]="getIcon(this.selectedRun.conclusion)"
+            [ngStyle]="{'color': getColor(this.selectedRun.conclusion)}">
           </fa-icon> Build #{{ this.selectedRun.run_number }}: {{ this.selectedRun.name }}
         </h6>
 
@@ -105,23 +105,23 @@
 
           <div class="btn-group" role="group" aria-label="Job selection" *ngIf="this.jobs != null && this.jobCount > 1">
             <button class="btn btn-outline-dark" type="button" *ngFor="let job of this.jobs; index as jobIndex"
-              [ngStyle]="{'color': getRunColor(job.conclusion)}"
+              [ngStyle]="{'color': getColor(job.conclusion)}"
               [ngClass]="{'active': this.selectedJobNum == jobIndex + 1}" (click)="loadJob(jobIndex)">
-              <fa-icon [icon]="getRunIcon(job.conclusion)"></fa-icon> {{ job.name }}
+              <fa-icon [icon]="getIcon(job.conclusion)"></fa-icon> {{ job.name }}
             </button>
           </div>
 
           <div class="bg-dark d-inline-flex fs-6 fw-normal lh-base px-3 py-2 rounded"
             *ngIf="this.jobs != null && this.jobCount == 1"
-            [ngStyle]="{'color': getRunColor(this.selectedJob.conclusion)}">
-            <fa-icon [icon]="getRunIcon(this.selectedJob.conclusion)"></fa-icon> {{ this.selectedJob.name }}
+            [ngStyle]="{'color': getColor(this.selectedJob.conclusion)}">
+            <fa-icon [icon]="getIcon(this.selectedJob.conclusion)"></fa-icon> {{ this.selectedJob.name }}
           </div>
 
           <div class="my-4 w-100" *ngIf="this.selectedJob != null">
             <ul class="list-group text-start" *ngIf="this.steps != null">
               <li class="list-group-item" *ngFor="let step of steps"
-                [ngStyle]="{'color': getRunColor(step.conclusion)}">
-                <fa-icon [icon]="getRunIcon(step.conclusion)"></fa-icon> {{ step.name }}
+                [ngStyle]="{'color': getColor(step.conclusion)}">
+                <fa-icon [icon]="getIcon(step.conclusion)"></fa-icon> {{ step.name }}
                 <i class="text-muted float-end">{{ getDuration(step.started_at, step.completed_at) }}</i>
               </li>
             </ul>
