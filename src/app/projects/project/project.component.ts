@@ -158,7 +158,7 @@ export class ProjectComponent implements OnInit {
     }
 
     this.http
-      .get(this.selectedRun.html_url, { observe: 'response' })
+      .get(this.selectedRun.jobs_url, { observe: 'response' })
       .subscribe((response) => {
         const rateLimitRemaining = parseInt(
           response.headers.get('X-Ratelimit-Remaining')
