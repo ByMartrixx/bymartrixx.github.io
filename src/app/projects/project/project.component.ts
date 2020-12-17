@@ -5,7 +5,9 @@ import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons';
 import {
   faCheck,
   faCircle,
+  faExclamation,
   faExclamationCircle,
+  faMinusCircle,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppComponent } from '../../app.component';
@@ -33,7 +35,9 @@ export class ProjectComponent implements OnInit {
   // Fontawesome icons
   faCheck = faCheck;
   faCircle = faCircle;
+  faExclamation = faExclamation;
   faExclamationCircle = faExclamationCircle;
+  faMinusCircle = faMinusCircle;
   farCircle = farCircle;
   faTimes = faTimes;
 
@@ -45,27 +49,47 @@ export class ProjectComponent implements OnInit {
     });
   }
 
-  getColor(runResult) {
-    if (runResult == 'success') {
-      return '#28A745';
-    } else if (runResult == 'failure') {
-      return '#CB2431';
-    } else if (runResult == 'in_progress') {
+  getColor(obj) {
+    const status = obj.status;
+
+    if (status == 'completed') {
+      const conclusion = obj.conclusion;
+
+      if (conclusion == 'success') {
+        return '#28A745';
+      } else if (conclusion == 'failure' || conclusion == 'startup_failure') {
+        return '#CB2431';
+      }
+    } else if (status == 'in_progress') {
       return '#dbab0a';
     }
 
     return '#959DA5';
   }
 
-  getIcon(runResult) {
-    if (runResult == 'success') {
-      return faCheck;
-    } else if (runResult == 'failure') {
-      return faTimes;
-    } else if (runResult == 'cancelled') {
-      return faExclamationCircle;
-    } else if (runResult == 'queued') {
+  getIcon(obj) {
+    const status = obj.status;
+
+    if (status == 'completed') {
+      const conclusion = obj.conclusion;
+
+      if (conclusion == 'success') {
+        return faCheck;
+      } else if (conclusion == 'failure') {
+        return faTimes;
+      } else if (conclusion == 'cancelled') {
+        return faExclamationCircle;
+      } else if (conclusion == 'quequed') {
+        return farCircle;
+      } else if (conclusion == 'skipped') {
+        return faMinusCircle;
+      } else if (conclusion == 'startup_failure') {
+        return faExclamation;
+      }
+    } else if (status == 'in_progress') {
       return farCircle;
+    } else if (status == 'queued') {
+      return faCircle;
     }
 
     return faCircle;
