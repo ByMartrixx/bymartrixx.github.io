@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons';
 import {
   faCheck,
   faCircle,
@@ -33,6 +34,7 @@ export class ProjectComponent implements OnInit {
   faCheck = faCheck;
   faCircle = faCircle;
   faExclamationCircle = faExclamationCircle;
+  farCircle = farCircle;
   faTimes = faTimes;
 
   constructor(private http: HttpClient, private route: ActivatedRoute) {}
@@ -49,7 +51,7 @@ export class ProjectComponent implements OnInit {
     } else if (runResult == 'failure') {
       return '#CB2431';
     } else if (runResult == 'in_progress') {
-      return "#dbab0a";
+      return '#dbab0a';
     }
 
     return '#959DA5';
@@ -62,6 +64,8 @@ export class ProjectComponent implements OnInit {
       return faTimes;
     } else if (runResult == 'cancelled') {
       return faExclamationCircle;
+    } else if (runResult == 'queued') {
+      return farCircle;
     }
 
     return faCircle;

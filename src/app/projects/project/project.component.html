@@ -119,8 +119,7 @@
 
           <div class="my-4 w-100" *ngIf="this.selectedJob != null">
             <ul class="list-group text-start" *ngIf="this.steps != null">
-              <li class="list-group-item" *ngFor="let step of steps"
-                [ngStyle]="{'color': getColor(step.conclusion)}">
+              <li class="list-group-item" *ngFor="let step of steps" [ngStyle]="{'color': getColor(step.conclusion)}">
                 <fa-icon [icon]="getIcon(step.conclusion)"></fa-icon> {{ step.name }}
                 <i class="text-muted float-end">{{ getDuration(step.started_at, step.completed_at) }}</i>
               </li>
