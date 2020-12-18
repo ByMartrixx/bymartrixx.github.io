@@ -123,6 +123,37 @@
               </li>
             </ul>
           </div>
+
+          <div class="my-4 w-100 h-100 text-center" *ngIf="this.selectedRun != null">
+            <h6 class="mx-auto">Artifacts</h6>
+            <p>(In a next update you will be able to download artifacts from here)</p>
+            <div class="border rounded overflow-auto p-1" id="artifactList"
+              [ngClass]="{'d-flex': this.artifacts == null, 'justify-content-center': this.artifacts == null}">
+              <a class="align-self-center" (click)="loadArtifacts()"
+                *ngIf="this.artifacts == null && !this.artifactsFetched && !this.rateLimited">Fetch artifafcts</a>
+
+              <div class="spinner-border m-auto text-primary align-self-center" role="status"
+                *ngIf="this.artifacts == null && this.artifactsFetched && !this.rateLimited">
+                <span class="d-none">Loading...</span>
+              </div>
+              <div class="align-self-center"
+                *ngIf="this.artifacts == null && this.artifactsFetched && this.rateLimited">
+                <h6>You have been rate limited :(</h6>
+                <p>Please try again in {{ getDurationFromS(this.rateLimitResetTimeRemaining) }}</p>
+              </div>
+
+              <div class="text-info" *ngIf="this.artifacts != null && this.artifactCount == 0">
+                <i>There are no artifacts for this project :(</i>
+              </div>
+              <ul class="list-group text-start" *ngIf="this.artifacts != null && this.artifactCount != 0">
+                <li class="list-group-item" *ngFor="let artifact of this.artifacts">
+                  <!-- TODO: Download artifact -->
+                  <fa-icon [icon]="faBox"></fa-icon> {{ artifact.name }}
+                  <i class="text-muted float-end">{{ getFileSize(artifact.size_in_bytes) }}</i>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons';
 import {
+  faBox,
   faCheck,
   faCircle,
   faExclamation,
@@ -27,12 +28,16 @@ export class ProjectComponent implements OnInit {
   selectedJob; // this.jobs[o]
   selectedJobNum; // (^) o
   steps; // this.selectedJob.steps
+  artifactCount; // <repos{/user}{/repo}/actions/runs{/run_id}/artifacts>.total_count
+  artifacts; // <repos{/user}{/repo}/actions/runs{/run_id}/artifacts>.artifacts
+  artifactsFetched;
 
   rateLimited;
   rateLimitReset;
   rateLimitResetTimeRemaining;
 
   // Fontawesome icons
+  faBox = faBox;
   faCheck = faCheck;
   faCircle = faCircle;
   faExclamation = faExclamation;
@@ -114,6 +119,22 @@ export class ProjectComponent implements OnInit {
 
   getDurationFromS(seconds: number): string {
     return AppComponent.getDurationFromS(seconds);
+  }
+
+  getFileSize(bytes: number): string {
+    if (bytes < 1000) {
+      return bytes + ' B';
+    }
+
+    const units = ['kB', 'MB', 'GB', 'TB'];
+    let u = -1;
+
+    do {
+      bytes /= 1024;
+      ++u;
+    } while (Math.round(bytes * 10) / 10 >= 1024 && u < units.length - 1);
+
+    return bytes.toFixed(1) + ' ' + units[u];
   }
 
   async deselectRun() {
@@ -224,5 +245,32 @@ export class ProjectComponent implements OnInit {
     }
     this.selectedJobNum = job + 1;
     this.steps = this.selectedJob.steps;
+  }
+
+  loadArtifacts() {
+    this.artifactsFetched = true;
+
+    this.http
+      .get(this.selectedRun.artifacts_url, { observe: 'response' })
+      .subscribe((response) => {
+        const rateLimitRemaining = parseInt(
+          response.headers.get('X-Ratelimit-Remaining')
+        );
+        this.rateLimitReset = response.headers.get('X-Ratelimit-Reset');
+
+        this.rateLimited = rateLimitRemaining <= 0;
+        this.rateLimitResetTimeRemaining =
+          this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+
+        if (!this.rateLimited) {
+          try {
+            this.artifactCount = response.body['total_count'];
+            this.artifacts = response.body['artifacts'];
+          } catch {
+            this.artifactCount = 0;
+            this.artifacts = null;
+          }
+        }
+      });
   }
 }
