@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons';
@@ -46,7 +45,7 @@ export class ProjectComponent implements OnInit {
   farCircle = farCircle;
   faTimes = faTimes;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -151,44 +150,45 @@ export class ProjectComponent implements OnInit {
     this.steps = null;
   }
 
-  loadProjectRuns(repositoryName) {
+  async loadProjectRuns(repositoryName) {
     this.deselectRun();
 
     this.projectName = repositoryName;
-    const baseUrl =
-      'https://api.github.com/repos/ByMartrixx/' + this.projectName;
 
     // Request action runs
-    this.http
-      .get(baseUrl + '/actions/runs', { observe: 'response' })
-      .subscribe((response) => {
-        const rateLimitRemaining = parseInt(
-          response.headers.get('X-Ratelimit-Remaining')
-        );
-        this.rateLimitReset = response.headers.get('X-Ratelimit-Reset');
+    const response = await AppComponent.octokit.actions.listWorkflowRunsForRepo(
+      {
+        owner: 'ByMartrixx',
+        repo: this.projectName,
+      }
+    );
 
-        this.rateLimited = rateLimitRemaining <= 0;
-        this.rateLimitResetTimeRemaining =
-          this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+    const rateLimitRemaining = parseInt(
+      response.headers['x-ratelimit-remaining']
+    );
+    this.rateLimitReset = response.headers['x-ratelimit-reset'];
 
-        if (!this.rateLimited) {
-          this.runs = response.body;
-          this.workflowRuns = this.runs.workflow_runs;
+    this.rateLimited = rateLimitRemaining <= 0;
+    this.rateLimitResetTimeRemaining =
+      this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
 
-          this.route.params.subscribe((params) => {
-            var run = params['run'];
+    if (!this.rateLimited) {
+      this.runs = response.data;
+      this.workflowRuns = this.runs.workflow_runs;
 
-            if (run == 'latest') {
-              this.loadRun(0);
-            } else if (run != undefined) {
-              this.loadRun(this.runs['total_count'] - run);
-            }
-          });
+      this.route.params.subscribe((params) => {
+        var run = params['run'];
+
+        if (run == 'latest') {
+          this.loadRun(0);
+        } else if (run != undefined) {
+          this.loadRun(this.runs.total_count - run);
         }
       });
+    }
   }
 
-  loadRun(run) {
+  async loadRun(run) {
     this.deselectRun();
 
     let count = this.runs['total_count'];
@@ -202,37 +202,39 @@ export class ProjectComponent implements OnInit {
       return;
     }
 
-    this.http
-      .get(this.selectedRun.jobs_url, { observe: 'response' })
-      .subscribe((response) => {
-        const rateLimitRemaining = parseInt(
-          response.headers.get('X-Ratelimit-Remaining')
-        );
-        this.rateLimitReset = response.headers.get('X-Ratelimit-Reset');
+    const response = await AppComponent.octokit.actions.listJobsForWorkflowRun({
+      owner: 'ByMartrixx',
+      repo: this.projectName,
+      run_id: this.selectedRun.id,
+    });
 
-        this.rateLimited = rateLimitRemaining <= 0;
-        this.rateLimitResetTimeRemaining =
-          this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+    const rateLimitRemaining = parseInt(
+      response.headers['x-ratelimit-remaining']
+    );
+    this.rateLimitReset = response.headers['x-ratelimit-reset'];
 
-        if (!this.rateLimited) {
-          try {
-            this.jobCount = response.body['total_count'];
-            this.jobs = response.body['jobs'];
-          } catch {
-            this.jobCount = 0;
-            this.jobs = null;
-          }
+    this.rateLimited = rateLimitRemaining <= 0;
+    this.rateLimitResetTimeRemaining =
+      this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
 
-          this.loadJob(0);
-        }
-      });
+    if (!this.rateLimited) {
+      try {
+        this.jobCount = response.data.total_count;
+        this.jobs = response.data.jobs;
+      } catch {
+        this.jobCount = 0;
+        this.jobs = null;
+      }
+
+      this.loadJob(0);
+    }
 
     try {
       window.scrollTo(0, document.getElementById('build-info').offsetWidth);
     } catch (error) {}
   }
 
-  loadJob(job) {
+  loadJob(job: number) {
     this.deselectJob();
 
     if (this.jobCount == 0) {
@@ -247,30 +249,34 @@ export class ProjectComponent implements OnInit {
     this.steps = this.selectedJob.steps;
   }
 
-  loadArtifacts() {
+  async loadArtifacts() {
     this.artifactsFetched = true;
 
-    this.http
-      .get(this.selectedRun.artifacts_url, { observe: 'response' })
-      .subscribe((response) => {
-        const rateLimitRemaining = parseInt(
-          response.headers.get('X-Ratelimit-Remaining')
-        );
-        this.rateLimitReset = response.headers.get('X-Ratelimit-Reset');
+    const response = await AppComponent.octokit.actions.listWorkflowRunArtifacts(
+      {
+        owner: 'ByMartrixx',
+        repo: this.projectName,
+        run_id: this.selectedRun.id,
+      }
+    );
 
-        this.rateLimited = rateLimitRemaining <= 0;
-        this.rateLimitResetTimeRemaining =
-          this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+    const rateLimitRemaining = parseInt(
+      response.headers['x-ratelimit-remaining']
+    );
+    this.rateLimitReset = response.headers['x-ratelimit-reset'];
 
-        if (!this.rateLimited) {
-          try {
-            this.artifactCount = response.body['total_count'];
-            this.artifacts = response.body['artifacts'];
-          } catch {
-            this.artifactCount = 0;
-            this.artifacts = null;
-          }
-        }
-      });
+    this.rateLimited = rateLimitRemaining <= 0;
+    this.rateLimitResetTimeRemaining =
+      this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+
+    if (!this.rateLimited) {
+      try {
+        this.artifactCount = response.data.total_count;
+        this.artifacts = response.data.artifacts;
+      } catch {
+        this.artifactCount = 0;
+        this.artifacts = null;
+      }
+    }
   }
 }

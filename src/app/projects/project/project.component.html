@@ -54,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-9 col-sm-8 mb-3 h-100 text-center" id="build-info">
+    <div class="col-md-9 col-sm-8 mb-3 h-100 text-center" id="build-info" *ngIf="this.runs != undefined && this.runs != null">
       <p *ngIf="this.selectedRun == null && this.runs.total_count != 0">Please select a build</p>
 
       <div class="run-content" *ngIf="this.selectedRun != null">
@@ -91,8 +91,7 @@
         <i class="text-info" *ngIf="this.selectedRun != null && this.jobCount == 0">There are no jobs for this build
           :(</i>
 
-        <div class="text-center" *ngIf="this.selectedRun != null && this.jobCount != 0"
-          [ngClass]="{'d-flex': this.jobs == null}">
+        <div class="text-center" *ngIf="this.selectedRun != null && this.jobCount != 0">
           <div class="spinner-border m-auto text-primary align-self-center" role="status"
             *ngIf="this.jobs == null && !this.rateLimited">
             <span class="d-none">Loading...</span>

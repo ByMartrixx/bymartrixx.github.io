@@ -1,4 +1,3 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   faArchive,
@@ -7,8 +6,6 @@ import {
   faCodeBranch,
   faStar,
 } from '@fortawesome/free-solid-svg-icons';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import colors from '../../assets/colors.json';
 import { AppComponent } from '../app.component';
 
@@ -31,41 +28,26 @@ export class ProjectsComponent implements OnInit {
   faCodeBranch = faCodeBranch;
   faStar = faStar;
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
-  ngOnInit(): void {
-    this.http
-      .get('https://api.github.com/users/ByMartrixx/repos', {
-        observe: 'response',
-      })
-      .pipe(catchError(this.handleError))
-      .subscribe((response) => {
-        const rateLimitRemaining = parseInt(
-          response.headers.get('X-Ratelimit-Remaining')
-        );
-        this.rateLimitReset = response.headers.get('X-Ratelimit-Reset');
+  async ngOnInit(): Promise<void> {
+    const response = await AppComponent.octokit.repos.listForUser({
+      username: 'ByMartrixx',
+    });
+    // TODO: Error handler?
 
-        this.rateLimited = rateLimitRemaining <= 0;
-        this.rateLimitResetTimeRemaining =
-          this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+    const rateLimitRemaining = parseInt(
+      response.headers['x-ratelimit-remaining']
+    );
+    this.rateLimitReset = response.headers['x-ratelimit-reset'];
 
-        if (!this.rateLimited) {
-          this.repositories = response.body;
-        }
-      });
-  }
+    this.rateLimited = rateLimitRemaining <= 0;
+    this.rateLimitResetTimeRemaining =
+      this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
 
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      console.error('An error occurred:', error.error.message);
-    } else {
-      console.error(
-        `Github API returned code ${error.status}, ` +
-          `message was: ${error.error.message}`
-      );
+    if (!this.rateLimited) {
+      this.repositories = response.data;
     }
-
-    return throwError('Something bad happened; please try again later.');
   }
 
   getColorForLang(language: string): string {

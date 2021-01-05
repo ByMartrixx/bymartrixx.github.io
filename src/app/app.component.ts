@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { Octokit } from '@octokit/rest';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +17,24 @@ export class AppComponent {
   faGithub = faGithub;
 
   public menuCollapsed = true;
+
+  static octokit = new Octokit({
+    userAgent: 'bymartrixx-github-io',
+    log: {
+      debug: () => {
+        if (!environment.production) {
+          console.debug
+        }
+      },
+      info: () => {
+        if (!environment.production) {
+          console.info
+        }
+      },
+      warn: console.warn,
+      error: console.error
+    }
+  });
 
   static getDurationFromMS(millis: number): string {
     let seconds = Math.floor(millis / 1000);
