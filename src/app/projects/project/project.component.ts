@@ -18,18 +18,18 @@ import { AppComponent } from '../../app.component';
   styleUrls: ['./project.component.scss'],
 })
 export class ProjectComponent implements OnInit {
-  projectName;
+  projectName: string;
   runs; // /repos{/user}{/repo}/action/runs
   workflowRuns; // this.runs.workflow_runs
   selectedRun; // this.workflowRuns[n]
-  jobCount; // </repos{/user}{/repo}/action/runs{/run_id}/jobs>.total_count
+  jobCount: number; // </repos{/user}{/repo}/action/runs{/run_id}/jobs>.total_count
   jobs; // </repos{/user}{/repo}/action/runs{/run_id}/jobs>.jobs
   selectedJob; // this.jobs[o]
-  selectedJobNum; // (^) o
+  selectedJobNum: number; // (^) o
   steps; // this.selectedJob.steps
-  artifactCount; // <repos{/user}{/repo}/actions/runs{/run_id}/artifacts>.total_count
+  artifactCount: number; // <repos{/user}{/repo}/actions/runs{/run_id}/artifacts>.total_count
   artifacts; // <repos{/user}{/repo}/actions/runs{/run_id}/artifacts>.artifacts
-  artifactsFetched;
+  artifactsFetched: boolean;
 
   rateLimited;
   rateLimitReset;
@@ -111,16 +111,16 @@ export class ProjectComponent implements OnInit {
   }
 
   getDuration(dateStart: string, dateEnd: string): string {
-    return AppComponent.getDurationFromMS(
+    return AppComponent.getHumanReadableDurationMS(
       new Date(dateEnd).getTime() - new Date(dateStart).getTime()
     );
   }
 
   getDurationFromS(seconds: number): string {
-    return AppComponent.getDurationFromS(seconds);
+    return AppComponent.getHumanReadableDurationS(seconds);
   }
 
-  getFileSize(bytes: number): string {
+  getHumanReadableFileSize(bytes: number): string {
     if (bytes < 1000) {
       return bytes + ' B';
     }

@@ -63,6 +63,6 @@ export class ProjectsComponent implements OnInit {
   }
 
   getDuration(seconds: number): string {
-    return AppComponent.getDurationFromS(seconds);
+    return AppComponent.getHumanReadableDurationS(seconds);
   }
 }

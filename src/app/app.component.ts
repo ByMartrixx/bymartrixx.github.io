@@ -36,12 +36,12 @@ export class AppComponent {
     }
   });
 
-  static getDurationFromMS(millis: number): string {
+  static getHumanReadableDurationMS(millis: number): string {
     let seconds = Math.floor(millis / 1000);
-    return this.getDurationFromS(seconds);
+    return this.getHumanReadableDurationS(seconds);
   }
 
-  static getDurationFromS(seconds: number): string {
+  static getHumanReadableDurationS(seconds: number): string {
     let minutes = Math.floor(seconds / 60);
     let hours = Math.floor(minutes / 60);
 

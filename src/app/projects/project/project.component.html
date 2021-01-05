@@ -148,7 +148,7 @@
                 <li class="list-group-item" *ngFor="let artifact of this.artifacts">
                   <!-- TODO: Download artifact -->
                   <fa-icon [icon]="faBox"></fa-icon> {{ artifact.name }}
-                  <i class="text-muted float-end">{{ getFileSize(artifact.size_in_bytes) }}</i>
+                  <i class="text-muted float-end">{{ getHumanReadableFileSize(artifact.size_in_bytes) }}</i>
                 </li>
               </ul>
             </div>
