@@ -44,7 +44,7 @@
       <div class="overflow-auto h-100 text-start" id="runList2" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
         <div class="mt-2 mb-1 mx-3 run" *ngFor="let workflowRun of this.workflowRuns; index as i">
           <a class="text-decoration-none"
-            [routerLink]="['/projects/project', this.projectName, this.runs.total_count - i]"
+            [routerLink]="['/projects/project', this.projectName, workflowRun.id]"
             [ngStyle]="{'color': getColor(workflowRun)}">
             <p class="mb-0">
               <fa-icon [icon]="getIcon(workflowRun)"></fa-icon> #{{ workflowRun.run_number }}
