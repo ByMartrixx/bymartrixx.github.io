@@ -328,7 +328,6 @@ export class ProjectComponent implements OnInit {
   }
 
   async loadMoreRuns() {
-    console.log(this.workflowRuns);
     if (this.runsPage < Math.ceil(this.runs.total_count / 50)) {
       this.runsPage++;
       await this.loadRuns();
