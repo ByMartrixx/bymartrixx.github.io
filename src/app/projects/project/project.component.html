@@ -41,7 +41,7 @@
         <i>There are no builds for this project :(</i>
       </div>
 
-      <div class="overflow-auto h-100 text-start" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
+      <div class="overflow-auto h-100 text-start" id="runList2" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
         <div class="mt-2 mb-1 mx-3 run" *ngFor="let workflowRun of this.workflowRuns; index as i">
           <a class="text-decoration-none"
             [routerLink]="['/projects/project', this.projectName, this.runs.total_count - i]"

@@ -31,6 +31,8 @@ export class ProjectComponent implements OnInit {
   artifacts; // <repos{/user}{/repo}/actions/runs{/run_id}/artifacts>.artifacts
   artifactsFetched: boolean;
 
+  runsPage: number = 1;
+
   rateLimited;
   rateLimitReset;
   rateLimitResetTimeRemaining;
@@ -101,13 +103,17 @@ export class ProjectComponent implements OnInit {
 
   getDate(date: string) {
     let date1 = new Date(date);
-    return new Intl.DateTimeFormat('default', {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric',
-      minute: 'numeric',
-      hour: 'numeric',
-    }).format(date1);
+    try {
+      return new Intl.DateTimeFormat('default', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+        minute: 'numeric',
+        hour: 'numeric',
+      }).format(date1);
+    } catch {
+      return date;
+    }
   }
 
   getDuration(dateStart: string, dateEnd: string): string {
@@ -155,12 +161,28 @@ export class ProjectComponent implements OnInit {
 
     this.projectName = repositoryName;
 
+    await this.loadRuns();
+    if (!this.rateLimited) {
+      this.route.params.subscribe((params) => {
+        var run = params['run'];
+
+        if (run == 'latest') {
+          this.loadRun(0);
+        } else if (run != undefined) {
+          this.loadRun(run);
+        }
+      });
+    }
+  }
+
+  async loadRuns() {
     // Request action runs
     const response = await AppComponent.octokit.actions.listWorkflowRunsForRepo(
       {
         owner: 'ByMartrixx',
         repo: this.projectName,
         per_page: 50,
+        page: this.runsPage,
       }
     );
 
@@ -175,17 +197,12 @@ export class ProjectComponent implements OnInit {
 
     if (!this.rateLimited) {
       this.runs = response.data;
-      this.workflowRuns = this.runs.workflow_runs;
 
-      this.route.params.subscribe((params) => {
-        var run = params['run'];
-
-        if (run == 'latest') {
-          this.loadRun(0);
-        } else if (run != undefined) {
-          this.loadRun(run);
-        }
-      });
+      if (this.workflowRuns == null) {
+        this.workflowRuns = response.data.workflow_runs;
+      } else {
+        this.workflowRuns = this.workflowRuns.concat(response.data.workflow_runs);
+      }
     }
   }
 
@@ -293,7 +310,7 @@ export class ProjectComponent implements OnInit {
       repo: this.projectName,
       run_id: run_id,
     });
-    
+
     const rateLimitRemaining = parseInt(
       response.headers['x-ratelimit-remaining']
     );
@@ -302,7 +319,7 @@ export class ProjectComponent implements OnInit {
     this.rateLimited = rateLimitRemaining <= 0;
     this.rateLimitResetTimeRemaining =
       this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
-    
+
     if (!this.rateLimited) {
       if (response.status == 200) {
         this.selectedRun = response.data;
@@ -311,6 +328,10 @@ export class ProjectComponent implements OnInit {
   }
 
   async loadMoreRuns() {
-    // TODO
+    console.log(this.workflowRuns);
+    if (this.runsPage < Math.ceil(this.runs.total_count / 50)) {
+      this.runsPage++;
+      await this.loadRuns();
+    }
   }
 }
