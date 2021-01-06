@@ -150,7 +150,7 @@ export class ProjectComponent implements OnInit {
     this.steps = null;
   }
 
-  async loadProjectRuns(repositoryName) {
+  async loadProjectRuns(repositoryName: string) {
     this.deselectRun();
 
     this.projectName = repositoryName;
@@ -160,6 +160,7 @@ export class ProjectComponent implements OnInit {
       {
         owner: 'ByMartrixx',
         repo: this.projectName,
+        per_page: 50,
       }
     );
 
@@ -182,13 +183,13 @@ export class ProjectComponent implements OnInit {
         if (run == 'latest') {
           this.loadRun(0);
         } else if (run != undefined) {
-          this.loadRun(this.runs.total_count - run);
+          this.loadRun(run);
         }
       });
     }
   }
 
-  async loadRun(run) {
+  async loadRun(run: number) {
     this.deselectRun();
 
     let count = this.runs['total_count'];
@@ -197,7 +198,13 @@ export class ProjectComponent implements OnInit {
       return;
     }
 
-    this.selectedRun = this.workflowRuns[run];
+    if (run <= this.runs.total_count) {
+      run = this.runs.total_count - run;
+      this.selectedRun = this.workflowRuns[run];
+    } else {
+      await this.loadRunId(run);
+    }
+
     if (this.selectedRun == null) {
       return;
     }
@@ -278,5 +285,32 @@ export class ProjectComponent implements OnInit {
         this.artifacts = null;
       }
     }
+  }
+
+  async loadRunId(run_id: number) {
+    const response = await AppComponent.octokit.actions.getWorkflowRun({
+      owner: 'ByMartrixx',
+      repo: this.projectName,
+      run_id: run_id,
+    });
+    
+    const rateLimitRemaining = parseInt(
+      response.headers['x-ratelimit-remaining']
+    );
+    this.rateLimitReset = response.headers['x-ratelimit-reset'];
+
+    this.rateLimited = rateLimitRemaining <= 0;
+    this.rateLimitResetTimeRemaining =
+      this.rateLimitReset - Math.floor(new Date().getTime() / 1000);
+    
+    if (!this.rateLimited) {
+      if (response.status == 200) {
+        this.selectedRun = response.data;
+      }
+    }
+  }
+
+  async loadMoreRuns() {
+    // TODO
   }
 }

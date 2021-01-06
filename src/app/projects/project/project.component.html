@@ -42,19 +42,26 @@
       </div>
 
       <div class="overflow-auto h-100 text-start" *ngIf="this.workflowRuns != null && this.runs.total_count != 0">
-        <div class="m-2 mx-3 run" *ngFor="let workflowRun of this.workflowRuns">
-          <p>
-            <a class="text-decoration-none"
-              [routerLink]="['/projects/project', this.projectName, workflowRun.run_number]"
-              [ngStyle]="{'color': getColor(workflowRun)}">
+        <div class="mt-2 mb-1 mx-3 run" *ngFor="let workflowRun of this.workflowRuns; index as i">
+          <a class="text-decoration-none"
+            [routerLink]="['/projects/project', this.projectName, this.runs.total_count - i]"
+            [ngStyle]="{'color': getColor(workflowRun)}">
+            <p class="mb-0">
               <fa-icon [icon]="getIcon(workflowRun)"></fa-icon> #{{ workflowRun.run_number }}
-            </a>
-            <small class="text-muted">{{ getDate(workflowRun.created_at) }}</small>
-          </p>
+              <small class="text-muted name">{{ workflowRun.name }}</small>
+            </p>
+          </a>
+          <small class="text-muted date">{{ getDate(workflowRun.created_at) }}</small>
+        </div>
+        <div class="mt-2 mt-1 mx-3 text-center" *ngIf="this.workflowRuns.length < this.runs.total_count">
+          <a (click)="this.loadMoreRuns()" class="link-primary" style="cursor: pointer;">
+            <p>Load more...</p>
+          </a>
         </div>
       </div>
     </div>
-    <div class="col-md-9 col-sm-8 mb-3 h-100 text-center" id="build-info" *ngIf="this.runs != undefined && this.runs != null">
+    <div class="col-md-9 col-sm-8 mb-3 h-100 text-center" id="build-info"
+      *ngIf="this.runs != undefined && this.runs != null">
       <p *ngIf="this.selectedRun == null && this.runs.total_count != 0">Please select a build</p>
 
       <div class="run-content" *ngIf="this.selectedRun != null">
