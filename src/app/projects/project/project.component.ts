@@ -32,6 +32,7 @@ export class ProjectComponent implements OnInit {
   artifactsFetched: boolean;
 
   runsPage: number = 1;
+  lastRunsPage: number = -1;
 
   rateLimited;
   rateLimitReset;
@@ -200,9 +201,12 @@ export class ProjectComponent implements OnInit {
 
       if (this.workflowRuns == null) {
         this.workflowRuns = response.data.workflow_runs;
-      } else {
-        this.workflowRuns = this.workflowRuns.concat(response.data.workflow_runs);
+      } else if (this.workflowRuns.length < this.runs.total_count && this.runsPage != this.lastRunsPage) {
+        this.workflowRuns = this.workflowRuns.concat(
+          response.data.workflow_runs
+        );
       }
+      this.lastRunsPage = this.runsPage;
     }
   }
 
